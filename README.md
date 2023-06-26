@@ -2,5 +2,16 @@
 
 This repository contains the codes of the Backend Master Class course by TECH SCHOOL.
 
-## Tools:
-- DB: Postgres, [Golang Migrate](https://github.com/golang-migrate/migrate)
+## Setup local environment
+
+### Install Tools:
+
+- Golang
+- Postgres
+- Docker
+- [Golang Migrate](https://github.com/golang-migrate/migrate)
+
+### Setup Services
+
+- Start all basic services: `$ make services `
+- Run db migration up all versions: `$ make migrateup`
