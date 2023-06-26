@@ -10,6 +10,7 @@ This repository contains the codes of the Backend Master Class course by TECH SC
 - Postgres
 - Docker
 - [Golang Migrate](https://github.com/golang-migrate/migrate)
+- [SQLC](https://github.com/kyleconroy/sqlc)
 
 ### Setup Services
 
