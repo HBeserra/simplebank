@@ -100,40 +100,24 @@ func (s Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTx
 			return err
 		}
 
-		// ToDo: Update accounts balance and use lock
 		// Update accounts balance
-
-		//Retrieve from account balance
-
-		var fromAccount Account
-		fromAccount, err = q.GetAccountForUpdate(ctx, arg.FromAccountID)
-
-		if err != nil {
-			return err
-		}
-
-		result.FromAccount, err = q.UpdateAccount(ctx, UpdateAccountParams{
-			ID:      arg.FromAccountID,
-			Balance: fromAccount.Balance - arg.Amount,
+		result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+			ID:     arg.FromAccountID,
+			Amount: -arg.Amount,
 		})
 
 		if err != nil {
 			return err
 		}
 
-		//Retrieve toAccount balance
-
-		var toAccount Account
-		toAccount, err = q.GetAccountForUpdate(ctx, arg.ToAccountID)
+		result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+			ID:     arg.ToAccountID,
+			Amount: arg.Amount,
+		})
 
 		if err != nil {
 			return err
 		}
-
-		result.ToAccount, err = q.UpdateAccount(ctx, UpdateAccountParams{
-			ID:      arg.ToAccountID,
-			Balance: toAccount.Balance + arg.Amount,
-		})
 
 		return nil
 	})
