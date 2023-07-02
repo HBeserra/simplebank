@@ -19,6 +19,7 @@ var testDB *sql.DB
 func TestMain(m *testing.M) {
 	var err error
 	testDB, err = sql.Open(dbDriver, dbSource)
+	testDB.SetMaxOpenConns(90)
 
 	if err != nil {
 		log.Fatal("cannot create connection to the database", err)

@@ -10,7 +10,7 @@ import (
 
 func TestTransferTx(t *testing.T) {
 	// run n concurrent transfer transactions
-	const n = 5
+	const n = 50
 
 	store := NewStore(testDB)
 
@@ -24,11 +24,12 @@ func TestTransferTx(t *testing.T) {
 	errs := make(chan error)               // Chanel for go routines return erros
 	results := make(chan TransferTxResult) // Chanel for go routines return transaction result
 
+	println("starting test")
 	for i := 0; i < n; i++ {
 		txName := fmt.Sprintf("tx %d", i+1)
+		println(txName, "started")
 		go func() {
-			ctx := context.WithValue(context.Background(), txKey, txName)
-			result, err := store.TransferTx(ctx, TransferTxParams{
+			result, err := store.TransferTx(context.Background(), TransferTxParams{
 				FromAccountID: account1.ID,
 				ToAccountID:   account2.ID,
 				Amount:        amount,
