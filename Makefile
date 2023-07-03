@@ -16,7 +16,10 @@ migratedown:
 sqlc:
 	sqlc generate
 
+psql:
+	docker-compose -f ./services-compose.yaml exec -it postgres psql -U root -d simple_bank
+
 test:
 	go test -v -cover -short ./...
 
-.PHONY: services createdb dropdb migrateup migratedown sqlc test
+.PHONY: services createdb dropdb migrateup migratedown sqlc test psql

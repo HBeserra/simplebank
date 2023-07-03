@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -101,26 +102,39 @@ func (s Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTx
 		}
 
 		// Update accounts balance
-		result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     arg.FromAccountID,
-			Amount: -arg.Amount,
-		})
-
-		if err != nil {
-			return err
+		if arg.FromAccountID == arg.ToAccountID {
+			return errors.New("transfer requires different sender and recipient accounts")
+		}
+		var err1, err2 error
+		if arg.FromAccountID < arg.ToAccountID {
+			result.FromAccount, err1 = addMoney(ctx, q, arg.FromAccountID, -arg.Amount)
+			result.ToAccount, err2 = addMoney(ctx, q, arg.ToAccountID, arg.Amount)
+		} else {
+			result.ToAccount, err2 = addMoney(ctx, q, arg.ToAccountID, arg.Amount)
+			result.FromAccount, err1 = addMoney(ctx, q, arg.FromAccountID, -arg.Amount)
 		}
 
-		result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     arg.ToAccountID,
-			Amount: arg.Amount,
-		})
-
-		if err != nil {
-			return err
+		if err1 != nil {
+			return err1
+		}
+		if err2 != nil {
+			return err2
 		}
 
 		return nil
 	})
 
 	return result, err
+}
+
+func addMoney(
+	ctx context.Context,
+	q *Queries,
+	accountID int64,
+	amount int64,
+) (Account, error) {
+	return q.AddAccountBalance(ctx, AddAccountBalanceParams{
+		ID:     accountID,
+		Amount: amount,
+	})
 }

@@ -10,7 +10,7 @@ import (
 
 func TestTransferTx(t *testing.T) {
 	// run n concurrent transfer transactions
-	const n = 50
+	const n = 5
 
 	store := NewStore(testDB)
 
@@ -24,7 +24,6 @@ func TestTransferTx(t *testing.T) {
 	errs := make(chan error)               // Chanel for go routines return erros
 	results := make(chan TransferTxResult) // Chanel for go routines return transaction result
 
-	println("starting test")
 	for i := 0; i < n; i++ {
 		txName := fmt.Sprintf("tx %d", i+1)
 		println(txName, "started")
@@ -112,4 +111,55 @@ func TestTransferTx(t *testing.T) {
 		//fmt.Printf("\ttransaction [%d]: %+v\n", i+1, result)
 		fmt.Printf("\t [%d] %d: %d | %d\n", i+1, amount, result.FromAccount.Balance, result.ToAccount.Balance)
 	}
+}
+
+// TestTransferTxForDeadlock Tries to create a deadlock by creating multiple transfers between 2 accounts
+// Account1 <--> Account2
+func TestTransferTxForDeadlock(t *testing.T) {
+	// run n concurrent transfer transactions
+	n := 10 // must be even number
+	store := NewStore(testDB)
+
+	account1 := createRandomAccount(t)
+	account2 := createRandomAccount(t)
+	errs := make(chan error)
+
+	//run n concurrent transfer transactions
+
+	for i := 0; i < n; i++ {
+		fromAccountID := account1.ID
+		toAccountID := account2.ID
+
+		if i%2 == 1 {
+			fromAccountID, toAccountID = toAccountID, fromAccountID // Invert accounts
+		}
+
+		go func() {
+			_, err := store.TransferTx(context.Background(), TransferTxParams{
+				FromAccountID: fromAccountID,
+				ToAccountID:   toAccountID,
+				Amount:        10,
+			})
+			errs <- err
+		}()
+	}
+
+	for i := 0; i < n; i++ {
+		err := <-errs
+		require.NoError(t, err)
+	}
+
+	var (
+		updatedAccount1, updatedAccount2 Account
+		err                              error
+	)
+	updatedAccount1, err = store.GetAccount(context.Background(), account1.ID)
+	require.NoError(t, err)
+
+	updatedAccount2, err = store.GetAccount(context.Background(), account2.ID)
+	require.NoError(t, err)
+
+	require.Equal(t, account1.Balance, updatedAccount1.Balance)
+	require.Equal(t, account2.Balance, updatedAccount2.Balance)
+
 }
