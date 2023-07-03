@@ -19,12 +19,14 @@ This repository contains the codes of the Backend Master Class course by TECH SC
 
 ## Developer commands
 
-| Command            | Description                                            |
-|--------------------|--------------------------------------------------------|
-| `make services`    | Run the required services using Docker-compose         |
-| `make test`        | Run all the defined tests                              |
-| `make createdb`    | Create the simple_bank db in the docker postgres       |
-| `make dropdb`      | Drop the development db                                |
-| `make migrateup`   | Run db migration to the latest migration               |
-| `make migratedown` | Run db migration one version down                      |
-| `make sqlc`        | Run SQLC generate to create crud after add a new query |
+| Command            | Description                                                      |
+|--------------------|------------------------------------------------------------------|
+| `make services`    | Run the required services using Docker-compose                   |
+| `make test`        | Run all the defined tests                                        |
+| `make createdb`    | Create the simple_bank db in the docker postgres                 |
+| `make dropdb`      | Drop the development db                                          |
+| `make migrateup`   | Run db migration to the latest migration                         |
+| `make migratedown` | Run db migration one version down                                |
+| `make sqlc`        | Run SQLC generate to create crud after add a new query           |
+| `make psql`        | Launches the PostgreSQL command-line interface on simple_bank db |
+
