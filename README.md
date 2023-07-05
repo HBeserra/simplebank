@@ -1,6 +1,6 @@
 # SimpleBank
 
-This repository contains the codes of the Backend Master Class course by TECH SCHOOL.
+This repository contains the codes of the [Backend Master Class course by TECH SCHOOL](https://www.udemy.com/course/backend-master-class-golang-postgresql-kubernetes/).
 
 ## Setup local environment
 
