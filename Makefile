@@ -26,4 +26,7 @@ psql:
 test:
 	go test -v -cover -short ./...
 
-.PHONY: services createdb dropdb migrateup migratedown sqlc test psql install_migrate
+server:
+	go run main.go
+
+.PHONY: services createdb dropdb migrateup migratedown sqlc test psql install_migrate server
